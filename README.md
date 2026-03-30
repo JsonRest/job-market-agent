@@ -29,7 +29,7 @@ job-market-agent/
 |---|---|---|
 | `companies` | 10 | PH tech companies across Metro Manila & Cebu |
 | `job_postings` | 20 | Active job listings with salary (PHP) and skills |
-| `job_embeddings` | 20 | AlloyDB AI–generated `textembedding-gecko@003` vectors |
+| `job_embeddings` | 20 | AlloyDB AI–generated `text-embedding-004` vectors |
 
 **AlloyDB AI extensions enabled:**
 - `google_ml_integration` – calls Vertex AI directly from SQL via the `embedding()` function
@@ -210,7 +210,7 @@ Edit `.env` with your values:
 GOOGLE_CLOUD_PROJECT=genaiacademy-491713
 GOOGLE_CLOUD_LOCATION=us-central1
 GOOGLE_GENAI_USE_VERTEXAI=True
-MODEL=gemini-2.5-flash
+MODEL=gemini-2.5-flash-lite
 
 ALLOYDB_REGION=us-central1
 ALLOYDB_CLUSTER=job-market-cluster
@@ -265,7 +265,7 @@ Setup complete!
 Run from the repo root (not from inside `job_market_agent/`):
 
 ```bash
-adk web
+uv run adk web
 ```
 
 Open `http://localhost:8000` in your browser. Try these queries:
@@ -308,7 +308,7 @@ adk deploy cloud_run \
   --service_name=job-market-agent \
   --with_ui \
   job_market_agent -- \
-  --set-env-vars="GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=True,MODEL=gemini-2.5-flash,ALLOYDB_REGION=us-central1,ALLOYDB_CLUSTER=job-market-cluster,ALLOYDB_INSTANCE=job-market-instance,ALLOYDB_USER=postgres,ALLOYDB_PASSWORD=your-secure-password-here,ALLOYDB_DB=job_market_db"
+  --set-env-vars="GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=True,MODEL=gemini-2.5-flash-lite,ALLOYDB_REGION=us-central1,ALLOYDB_CLUSTER=job-market-cluster,ALLOYDB_INSTANCE=job-market-instance,ALLOYDB_USER=postgres,ALLOYDB_PASSWORD=your-secure-password-here,ALLOYDB_DB=job_market_db"
 ```
 
 The deploy output will end with your Cloud Run service URL — that is your submission link.
@@ -352,9 +352,9 @@ The deploy output will end with your Cloud Run service URL — that is your subm
 | `setup_db.py` embedding step fails with permission error | AlloyDB SA needs `roles/aiplatform.user` — see Step 4 |
 | ADC errors / wrong project credentials | `unset GOOGLE_APPLICATION_CREDENTIALS` then `gcloud auth application-default login` |
 | `{"detail":"Not Found"}` at the Cloud Run URL | `--with_ui` was missing from the deploy command — redeploy |
-| `adk web` shows agent not found | You ran it from inside `job_market_agent/` — move up to the repo root |
+| `adk web` shows agent not found | You ran it from inside `job_market_agent/` — move up to the repo root and use `uv run adk web` |
 | AlloyDB Auth Proxy connection refused | The proxy process in Terminal 1 died; restart it before connecting with psql |
-| `psql: command not found` | Run `brew install libpq` then add `/opt/homebrew/opt/libpq/bin` to your PATH via `~/.zshrc` (see Step 4) |
+| `429 RESOURCE_EXHAUSTED` from Vertex AI | New GCP projects have low quota for `gemini-2.5-flash`; set `MODEL=gemini-2.5-flash-lite` in `.env` and redeploy |
 
 ---
 

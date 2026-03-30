@@ -35,7 +35,7 @@ INSTANCE     = os.getenv("ALLOYDB_INSTANCE", "job-market-instance")
 DB_USER      = os.getenv("ALLOYDB_USER", "postgres")
 DB_PASS      = os.environ["ALLOYDB_PASSWORD"]
 DB_NAME      = os.getenv("ALLOYDB_DB", "job_market_db")
-MODEL        = os.getenv("MODEL", "gemini-2.5-flash")
+MODEL        = os.getenv("MODEL", "gemini-2.5-flash-lite")
 
 INSTANCE_URI = (
     f"projects/{PROJECT}/locations/{REGION}"
