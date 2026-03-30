@@ -132,37 +132,38 @@ async def main() -> None:
     )
 
     try:
-        # ── Schema ────────────────────────────────────────────────────────────
+        # ── Schema (run outside transaction — DDL in PG auto-commits) ─────────
         print("Creating schema and enabling AI extensions...")
         await conn.execute(DDL)
 
-        # ── Truncate all tables in one statement (PG handles FK order) ─────
-        print("Clearing existing data...")
-        await conn.execute("TRUNCATE job_embeddings, job_postings, companies")
+        # ── All data loading in one explicit transaction ───────────────────────
+        async with conn.transaction():
+            print("Clearing existing data...")
+            await conn.execute("TRUNCATE job_embeddings, job_postings, companies")
 
-        # ── Companies ─────────────────────────────────────────────────────────
-        print("Loading companies...")
-        for row in COMPANIES:
-            await conn.execute(
-                "INSERT INTO companies (name,industry,company_size,headquarters,website,founded_year) "
-                "VALUES ($1,$2,$3,$4,$5,$6)",
-                *row,
-            )
+            # ── Companies ─────────────────────────────────────────────────────
+            print("Loading companies...")
+            for row in COMPANIES:
+                await conn.execute(
+                    "INSERT INTO companies (name,industry,company_size,headquarters,website,founded_year) "
+                    "VALUES ($1,$2,$3,$4,$5,$6)",
+                    *row,
+                )
 
-        # ── Job postings ──────────────────────────────────────────────────────
-        print("Loading job postings...")
-        for row in JOBS:
-            cid, title, dept, skills, emin, emax, smin, smax, loc, remote, desc = row
-            await conn.execute(
-                "INSERT INTO job_postings "
-                "(company_id,title,department,skills_required,"
-                " experience_years_min,experience_years_max,"
-                " salary_min,salary_max,location,remote_type,description) "
-                "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
-                cid, title, dept, skills, emin, emax, smin, smax, loc, remote, desc,
-            )
+            # ── Job postings ──────────────────────────────────────────────────
+            print("Loading job postings...")
+            for row in JOBS:
+                cid, title, dept, skills, emin, emax, smin, smax, loc, remote, desc = row
+                await conn.execute(
+                    "INSERT INTO job_postings "
+                    "(company_id,title,department,skills_required,"
+                    " experience_years_min,experience_years_max,"
+                    " salary_min,salary_max,location,remote_type,description) "
+                    "VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
+                    cid, title, dept, skills, emin, emax, smin, smax, loc, remote, desc,
+                )
 
-        # ── AlloyDB AI: generate embeddings using google_ml_integration ───────
+        # ── AlloyDB AI: embeddings (outside transaction — long-running) ───────
         print("Generating job embeddings via AlloyDB AI (google_ml_integration)...")
         await conn.execute("""
             INSERT INTO job_embeddings (job_id, embedding)
