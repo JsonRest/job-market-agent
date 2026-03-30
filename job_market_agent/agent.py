@@ -18,7 +18,14 @@ import asyncpg
 from google.cloud.alloydb.connector import AsyncConnector, IPTypes
 from google.adk.agents import LlmAgent
 
-load_dotenv()
+from decimal import Decimal
+
+
+def _json_safe(val):
+    """Convert asyncpg types that are not JSON serializable to native Python types."""
+    if isinstance(val, Decimal):
+        return int(val) if val == val.to_integral_value() else float(val)
+    return val
 
 # ── Connection config ─────────────────────────────────────────────────────────
 PROJECT      = os.environ["GOOGLE_CLOUD_PROJECT"]
@@ -124,7 +131,7 @@ async def execute_sql(sql: str) -> dict:
     conn = await _get_conn()
     try:
         records = await conn.fetch(sql)
-        rows = [dict(r) for r in records]
+        rows = [{k: _json_safe(v) for k, v in dict(r).items()} for r in records]
         return {
             "success": True,
             "row_count": len(rows),
