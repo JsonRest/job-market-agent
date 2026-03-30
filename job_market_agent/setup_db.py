@@ -15,7 +15,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 import asyncpg
-from google.cloud.alloydb.connector import AsyncConnector
+from google.cloud.alloydb.connector import AsyncConnector, IPTypes
 
 load_dotenv()
 
@@ -128,6 +128,7 @@ async def main() -> None:
     conn: asyncpg.Connection = await connector.connect(
         INSTANCE_URI, "asyncpg",
         user=DB_USER, password=DB_PASS, db=DB_NAME,
+        ip_type=IPTypes.PUBLIC,
     )
 
     try:

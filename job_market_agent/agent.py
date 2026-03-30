@@ -15,7 +15,7 @@ import os
 import asyncio
 from dotenv import load_dotenv
 import asyncpg
-from google.cloud.alloydb.connector import AsyncConnector
+from google.cloud.alloydb.connector import AsyncConnector, IPTypes
 from google.adk.agents import LlmAgent
 
 load_dotenv()
@@ -50,6 +50,7 @@ async def _get_conn() -> asyncpg.Connection:
         user=DB_USER,
         password=DB_PASS,
         db=DB_NAME,
+        ip_type=IPTypes.PUBLIC,
     )
 
 
