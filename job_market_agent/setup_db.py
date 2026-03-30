@@ -166,7 +166,7 @@ async def main() -> None:
             INSERT INTO job_embeddings (job_id, embedding)
             SELECT
                 id,
-                embedding('textembedding-gecko@003', title || ' ' || description || ' ' || array_to_string(skills_required, ', '))
+                embedding('text-embedding-004', title || ' ' || description || ' ' || array_to_string(skills_required, ', '))
             FROM job_postings
             ON CONFLICT (job_id) DO UPDATE SET embedding = EXCLUDED.embedding
         """)
