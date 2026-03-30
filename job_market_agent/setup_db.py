@@ -136,11 +136,9 @@ async def main() -> None:
         print("Creating schema and enabling AI extensions...")
         await conn.execute(DDL)
 
-        # ── Truncate in reverse FK order to avoid cascade issues ────────────
+        # ── Truncate all tables in one statement (PG handles FK order) ─────
         print("Clearing existing data...")
-        await conn.execute("TRUNCATE job_embeddings")
-        await conn.execute("TRUNCATE job_postings")
-        await conn.execute("TRUNCATE companies")
+        await conn.execute("TRUNCATE job_embeddings, job_postings, companies")
 
         # ── Companies ─────────────────────────────────────────────────────────
         print("Loading companies...")
