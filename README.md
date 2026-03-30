@@ -218,6 +218,7 @@ ALLOYDB_INSTANCE=job-market-instance
 ALLOYDB_USER=postgres
 ALLOYDB_PASSWORD=your-secure-password-here
 ALLOYDB_DB=job_market_db
+ALLOYDB_IP_TYPE=public
 ```
 
 ---
@@ -302,13 +303,13 @@ gcloud projects add-iam-policy-binding $PROJECT \
 Run from the repo root. Replace `your-secure-password-here` with your actual AlloyDB password.
 
 ```bash
-adk deploy cloud_run \
+uv run adk deploy cloud_run \
   --project=$PROJECT \
   --region=us-central1 \
   --service_name=job-market-agent \
   --with_ui \
   job_market_agent -- \
-  --set-env-vars="GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=True,MODEL=gemini-2.5-flash-lite,ALLOYDB_REGION=us-central1,ALLOYDB_CLUSTER=job-market-cluster,ALLOYDB_INSTANCE=job-market-instance,ALLOYDB_USER=postgres,ALLOYDB_PASSWORD=your-secure-password-here,ALLOYDB_DB=job_market_db"
+  --set-env-vars="GOOGLE_CLOUD_PROJECT=$PROJECT,GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=True,MODEL=gemini-2.5-flash-lite,ALLOYDB_REGION=us-central1,ALLOYDB_CLUSTER=job-market-cluster,ALLOYDB_INSTANCE=job-market-instance,ALLOYDB_USER=postgres,ALLOYDB_PASSWORD=your-secure-password-here,ALLOYDB_DB=job_market_db,ALLOYDB_IP_TYPE=public"
 ```
 
 The deploy output will end with your Cloud Run service URL — that is your submission link.
@@ -354,7 +355,7 @@ The deploy output will end with your Cloud Run service URL — that is your subm
 | `{"detail":"Not Found"}` at the Cloud Run URL | `--with_ui` was missing from the deploy command — redeploy |
 | `adk web` shows agent not found | You ran it from inside `job_market_agent/` — move up to the repo root and use `uv run adk web` |
 | AlloyDB Auth Proxy connection refused | The proxy process in Terminal 1 died; restart it before connecting with psql |
-| `429 RESOURCE_EXHAUSTED` from Vertex AI | New GCP projects have low quota for `gemini-2.5-flash`; set `MODEL=gemini-2.5-flash-lite` in `.env` and redeploy |
+| `TimeoutError` on Cloud Run when querying | Cloud Run cannot reach AlloyDB private IP — ensure `ALLOYDB_IP_TYPE=public` is in the deploy `--set-env-vars` |
 
 ---
 
