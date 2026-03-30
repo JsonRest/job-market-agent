@@ -139,7 +139,7 @@ async def main() -> None:
         # ── All data loading in one explicit transaction ───────────────────────
         async with conn.transaction():
             print("Clearing existing data...")
-            await conn.execute("TRUNCATE job_embeddings, job_postings, companies")
+            await conn.execute("TRUNCATE job_embeddings, job_postings, companies RESTART IDENTITY")
 
             # ── Companies ─────────────────────────────────────────────────────
             print("Loading companies...")
