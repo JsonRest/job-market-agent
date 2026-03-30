@@ -136,9 +136,14 @@ async def main() -> None:
         print("Creating schema and enabling AI extensions...")
         await conn.execute(DDL)
 
+        # ── Truncate in reverse FK order to avoid cascade issues ────────────
+        print("Clearing existing data...")
+        await conn.execute("TRUNCATE job_embeddings")
+        await conn.execute("TRUNCATE job_postings")
+        await conn.execute("TRUNCATE companies")
+
         # ── Companies ─────────────────────────────────────────────────────────
         print("Loading companies...")
-        await conn.execute("TRUNCATE companies CASCADE")
         for row in COMPANIES:
             await conn.execute(
                 "INSERT INTO companies (name,industry,company_size,headquarters,website,founded_year) "
@@ -148,7 +153,6 @@ async def main() -> None:
 
         # ── Job postings ──────────────────────────────────────────────────────
         print("Loading job postings...")
-        await conn.execute("TRUNCATE job_postings CASCADE")
         for row in JOBS:
             cid, title, dept, skills, emin, emax, smin, smax, loc, remote, desc = row
             await conn.execute(
