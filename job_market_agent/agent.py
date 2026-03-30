@@ -37,7 +37,8 @@ DB_PASS      = os.environ["ALLOYDB_PASSWORD"]
 DB_NAME      = os.getenv("ALLOYDB_DB", "job_market_db")
 MODEL        = os.getenv("MODEL", "gemini-2.5-flash-lite")
 
-INSTANCE_URI = (
+ALLOYDB_IP_TYPE = os.getenv("ALLOYDB_IP_TYPE", "private").lower()
+_ip_type = IPTypes.PUBLIC if ALLOYDB_IP_TYPE == "public" else IPTypes.PRIVATE
     f"projects/{PROJECT}/locations/{REGION}"
     f"/clusters/{CLUSTER}/instances/{INSTANCE}"
 )
@@ -57,7 +58,7 @@ async def _get_conn() -> asyncpg.Connection:
         user=DB_USER,
         password=DB_PASS,
         db=DB_NAME,
-        ip_type=IPTypes.PUBLIC,
+        ip_type=_ip_type,
     )
 
 
