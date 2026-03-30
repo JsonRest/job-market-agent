@@ -104,6 +104,8 @@ Tables:
 
 Key rules:
   - Filter skills with: 'Python' = ANY(skills_required)
+  - Use ILIKE for location searches: location ILIKE '%Metro Manila%' or location ILIKE '%Taguig%'
+  - "Metro Manila" queries should use: location ILIKE '%Manila%' OR location ILIKE '%Taguig%' OR location ILIKE '%Makati%' OR location ILIKE '%Quezon City%' OR location ILIKE '%Mandaluyong%' OR location ILIKE '%Pasig%'
   - Always include WHERE is_active = true unless the user asks about inactive roles
   - salary_min / salary_max are in Philippine Peso (PHP / ₱)
   - Add LIMIT 20 for row-returning SELECT queries; no limit for COUNT/aggregate queries
