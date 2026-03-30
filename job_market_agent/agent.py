@@ -39,6 +39,8 @@ MODEL        = os.getenv("MODEL", "gemini-2.5-flash-lite")
 
 ALLOYDB_IP_TYPE = os.getenv("ALLOYDB_IP_TYPE", "private").lower()
 _ip_type = IPTypes.PUBLIC if ALLOYDB_IP_TYPE == "public" else IPTypes.PRIVATE
+
+INSTANCE_URI = (
     f"projects/{PROJECT}/locations/{REGION}"
     f"/clusters/{CLUSTER}/instances/{INSTANCE}"
 )
