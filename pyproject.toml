@@ -1,0 +1,19 @@
+[project]
+name = "job-market-agent"
+version = "0.1.0"
+description = "Track 3 – Philippine Tech Job Market NL Query Agent (AlloyDB AI + ADK)"
+requires-python = ">=3.10"
+dependencies = [
+    "google-adk>=1.0.0",
+    "google-cloud-alloydb-connector[asyncpg]>=1.4.0",
+    "asyncpg>=0.29.0",
+    "python-dotenv>=1.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.4.0",
+]
+
+[tool.ruff]
+line-length = 100
