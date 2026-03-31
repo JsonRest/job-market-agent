@@ -4,7 +4,7 @@
 
 An ADK agent backed by **AlloyDB for PostgreSQL** with AI extensions enabled. Users ask natural-language questions; the agent converts them to SQL, runs them against AlloyDB, and returns readable results.
 
-<img width="1728" height="1117" alt="job-market-agent-alloydb" src="https://github.com/user-attachments/assets/c91932b7-8d3e-4292-9cb4-825b88538c3b" />
+<img width="1375" height="756" alt="job-market-agent-alloydb-demo" src="https://github.com/user-attachments/assets/5ac24318-7e89-4ffe-abcb-0b2b9692700f" />
 
 ---
 
